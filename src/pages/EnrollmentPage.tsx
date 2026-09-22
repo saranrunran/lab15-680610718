@@ -8,8 +8,9 @@ export default function Enrollent() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold">รายวิชาทั้งหมด</h1>
-          <RegisterDialog />
+          <p className="text-gray-500 text-sm">Saranporn Putsadee (680610718)</p>
         </div>
+        <RegisterDialog />
       </div>
 
       <div className="flex flex-col gap-4">
