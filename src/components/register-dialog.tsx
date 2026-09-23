@@ -11,25 +11,86 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { courses, currentStudent } from "@/lib/mock-data";
+import { Clock } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function RegisterDialog() {
-  const [open, setOpen] = useState(false); // true = แสดง Dialog
-  const [courseId, setCourseId] = useState("");
+  const [open, setOpen] = useState(false);
 
-  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault(); // ไม่ให้หน้าเว็บ reload
-    setCourseId(""); // เคลียร์ฟอร์ม
-    setOpen(false); // ปิด Dialog
-  }
+  const getCurrentTime = () => {
+    return new Date().toTimeString().split(" ")[0];
+  };
+
+  const rawCards = typeof window !== "undefined" ? localStorage.getItem("lab15.cards") : null;
+  const prevCards = rawCards ? JSON.parse(rawCards) : [];
+
+  const enrolledCourseIds = prevCards
+    .filter((card: any) => card.isEnrolled)
+    .map((card: any) => card.courseId);
+
+  const availableCourses = courses.filter(
+    (c) => !enrolledCourseIds.includes(c.courseId)
+  );
+
+  const [form, setForm] = useState({
+    course: "",
+    time: getCurrentTime(),
+    fullName: `${currentStudent.firstName} ${currentStudent.lastName}`,
+    program: currentStudent.program,
+  });
+
+  const [courseError, setCourseError] = useState(false);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      setForm((prev) => ({ ...prev, time: getCurrentTime(), course: "" }));
+      setCourseError(false);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!form.course) {
+      setCourseError(true);
+      return;
+    }
+
+    const updatedCards = prevCards.map((card: any) => {
+      if (card.courseId === form.course || card.id === form.course) {
+        return {
+          ...card,
+          isEnrolled: true,
+          studentName: form.fullName,
+          program: form.program,
+          registeredTime: form.time,
+        };
+      }
+      return card;
+    });
+
+    localStorage.setItem("lab15.cards", JSON.stringify(updatedCards));
+
+    setOpen(false);
+
+    window.location.reload();
+  };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      {/* ปุ่มที่กดแล้วเปิด Dialog */}
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger>
         <Button>ลงทะเบียน</Button>
       </DialogTrigger>
 
-      {/* ฟอร์มที่แสดงออกมาเมื่อกดปุ่ม */}
       <DialogContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>
@@ -38,22 +99,68 @@ export function RegisterDialog() {
           </DialogHeader>
 
           <div className="space-y-2">
-            <Label htmlFor="studentId">รหัสนักศึกษา</Label>
-            <Input id="studentId" placeholder="เช่น 650610002" />
+            <Label htmlFor="course">วิชา</Label>
+            {/* ดักค่าใส่ form.course */}
+            <Select
+              value={form.course}
+              onValueChange={(val) => {
+                setForm({ ...form, course: val ?? "" });
+                setCourseError(false);
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="เลือกวิชา" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {availableCourses.map((c) => (
+                    <SelectItem key={c.courseId} value={c.courseId + " - " + c.courseTitle}>
+                      {c.courseId} – {c.courseTitle}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="fullName">ชื่อ-นามสกุล</Label>
-            <Input id="fullName" placeholder="เช่น Cillian Murphy" />
+            <Label htmlFor="time-input">เวลา</Label>
+            <div className="relative">
+              <Clock className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                className="bg-background pl-9"
+                id="time-input"
+                type="time"
+                step="1"
+                readOnly
+                value={form.time}
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="courseId">รหัสวิชา</Label>
-            <Input id="courseId" placeholder="เช่น 261207" />
+            <Label htmlFor="fullName">ชื่อ นศ.</Label>
+            <Input
+              id="fullName"
+              readOnly
+              value={form.fullName}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="program">โปรแกรม</Label>
+            <Input
+              id="program"
+              readOnly
+              value={form.program}
+            />
           </div>
 
           <DialogFooter>
-            <Button type="submit">ยืนยัน</Button>
+            <Button 
+              type="submit" 
+              disabled={!form.course}
+            >ยืนยัน</Button>
           </DialogFooter>
         </form>
       </DialogContent>
