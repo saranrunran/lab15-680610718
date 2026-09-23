@@ -28,6 +28,20 @@ export function RegisterDialog() {
   const getCurrentTime = () => {
     return new Date().toTimeString().split(" ")[0];
   };
+  
+  const [form, setForm] = useState({
+    course: "",
+    time: getCurrentTime(),
+    fullName: `${currentStudent.firstName} ${currentStudent.lastName}`,
+    program: currentStudent.program,
+  });
+
+  const selectedCourse = courses.find((c) => c.courseId === form.course);
+
+  const fullCourseLabel = selectedCourse 
+    ? `${selectedCourse.courseId} – ${selectedCourse.courseTitle}`
+    : undefined;
+
 
   const rawCards = typeof window !== "undefined" ? localStorage.getItem("lab15.cards") : null;
   const prevCards = rawCards ? JSON.parse(rawCards) : [];
@@ -40,12 +54,6 @@ export function RegisterDialog() {
     (c) => !enrolledCourseIds.includes(c.courseId)
   );
 
-  const [form, setForm] = useState({
-    course: "",
-    time: getCurrentTime(),
-    fullName: `${currentStudent.firstName} ${currentStudent.lastName}`,
-    program: currentStudent.program,
-  });
 
   const [courseError, setCourseError] = useState(false);
 
@@ -109,12 +117,14 @@ export function RegisterDialog() {
               }}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="เลือกวิชา" />
+                <SelectValue placeholder="เลือกวิชา">
+                  {fullCourseLabel}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   {availableCourses.map((c) => (
-                    <SelectItem key={c.courseId} value={c.courseId + " - " + c.courseTitle}>
+                    <SelectItem key={c.courseId} value={c.courseId}>
                       {c.courseId} – {c.courseTitle}
                     </SelectItem>
                   ))}
@@ -159,7 +169,7 @@ export function RegisterDialog() {
           <DialogFooter>
             <Button 
               type="submit" 
-              disabled={!form.course}
+              disabled={!form.course || form.course.trim() === ""}
             >ยืนยัน</Button>
           </DialogFooter>
         </form>
