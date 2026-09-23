@@ -18,7 +18,6 @@ type CourseCardProps = {
   isEnrolled?: boolean;
 };
 
-
 export function CourseCard({ course, student, enrolledAt, isEnrolled }: CourseCardProps) {
   return (
     <Card>

@@ -22,7 +22,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function RegisterDialog({ onEnrollSuccess }: { onEnrollSuccess?: (id: string) => void }) {
+export function RegisterDialog({
+  enrolledCourseIds,
+  onEnrollSuccess,
+}: {
+  enrolledCourseIds: string[];
+  onEnrollSuccess?: (id: string) => void;
+}) {
   const [open, setOpen] = useState(false);
 
   const getCurrentTime = () => {
@@ -42,14 +48,6 @@ export function RegisterDialog({ onEnrollSuccess }: { onEnrollSuccess?: (id: str
     ? `${selectedCourse.courseId} – ${selectedCourse.courseTitle}`
     : undefined;
 
-
-  const rawCards = typeof window !== "undefined" ? localStorage.getItem("lab15.cards") : null;
-  const prevCards = rawCards ? JSON.parse(rawCards) : [];
-
-  const enrolledCourseIds = prevCards
-    .filter((card: any) => card.isEnrolled)
-    .map((card: any) => card.courseId);
-
   const availableCourses = courses.filter(
     (c) => !enrolledCourseIds.includes(c.courseId)
   );
@@ -64,35 +62,7 @@ export function RegisterDialog({ onEnrollSuccess }: { onEnrollSuccess?: (id: str
       setCourseError(false);
     }
   };
-
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   if (!form.course) {
-  //     setCourseError(true);
-  //     return;
-  //   }
-
-  //   const updatedCards = prevCards.map((card: any) => {
-  //     if (card.courseId === form.course || card.id === form.course) {
-  //       return {
-  //         ...card,
-  //         isEnrolled: true,
-  //         studentName: form.fullName,
-  //         program: form.program,
-  //         registeredTime: form.time,
-  //       };
-  //     }
-  //     return card;
-  //   });
-
-  //   localStorage.setItem("lab15.cards", JSON.stringify(updatedCards));
-
-  //   setOpen(false);
-
-  //   window.location.reload();
-  // };
-
+ 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.course) return;
@@ -101,7 +71,7 @@ export function RegisterDialog({ onEnrollSuccess }: { onEnrollSuccess?: (id: str
       onEnrollSuccess(form.course);
     }
 
-    setOpen(false); // ปิดกล่อง Dialog
+    setOpen(false);
   };
 
   return (
