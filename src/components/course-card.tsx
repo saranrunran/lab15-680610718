@@ -10,15 +10,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge"
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button"
 
 type CourseCardProps = {
   course: Course;
   student: Student;
   enrolledAt?: string;
   isEnrolled?: boolean;
+  onUnenroll?: (courseId: string) => void;
 };
 
-export function CourseCard({ course, student, enrolledAt, isEnrolled }: CourseCardProps) {
+export function CourseCard({ course, student, enrolledAt, isEnrolled, onUnenroll }: CourseCardProps) {
   return (
     <Card>
       <CardHeader className="flex items-start justify-between gap-4">
@@ -39,13 +42,23 @@ export function CourseCard({ course, student, enrolledAt, isEnrolled }: CourseCa
       </CardHeader>
       
       {isEnrolled && (
-        <CardContent className="flex items-end justify-between">
-          <div className="text-xs text-muted-foreground">
-            <p>ชื่อ นศ.: {student.firstName} {student.lastName}</p>
-            <p>โปรแกรม: {student.program}</p>
-            <p>ลงทะเบียนเมื่อ: {enrolledAt}</p>
-          </div>
-        </CardContent>
+        <div>
+          <CardContent className="flex items-end justify-between">
+            <div className="text-xs text-muted-foreground">
+              <p>ชื่อ นศ.: {student.firstName} {student.lastName}</p>
+              <p>โปรแกรม: {student.program}</p>
+              <p>ลงทะเบียนเมื่อ: {enrolledAt}</p>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              aria-label={`ยกเลิกการลงทะเบียน ${course.courseTitle}`}
+              onClick={() => onUnenroll?.(course.courseId)}
+            >
+              <Trash2 className="text-destructive"></Trash2>
+            </Button>
+          </CardContent>
+        </div>
       )}
     </Card>
   );

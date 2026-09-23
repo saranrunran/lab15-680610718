@@ -17,6 +17,15 @@ export default function Enrollment() {
     }));
   };
 
+  const handleUnenroll = (courseId: string) => {
+    setEnrolledIds((prev) => prev.filter((id) => id !== courseId));
+    setEnrolledAtMap((prev) => {
+      const next = { ...prev };
+      delete next[courseId];
+      return next;
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-4">
@@ -38,6 +47,7 @@ export default function Enrollment() {
             student={currentStudent}
             isEnrolled={enrolledIds.includes(course.courseId)}
             enrolledAt={enrolledAtMap[course.courseId]}
+            onUnenroll={handleUnenroll}
           />
         ))}
       </div>

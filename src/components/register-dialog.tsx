@@ -122,8 +122,6 @@ export function RegisterDialog({
                 className="bg-background pl-9"
                 id="time-input"
                 type="time"
-                step="1"
-                readOnly
                 value={form.time}
               />
             </div>
