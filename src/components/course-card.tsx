@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import type { Course, Student } from "@/lib/types";
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";

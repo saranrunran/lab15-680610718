@@ -53,13 +53,13 @@ export function RegisterDialog({
   );
 
 
-  const [courseError, setCourseError] = useState(false);
+  // const [courseError, setCourseError] = useState(false);
 
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
     if (isOpen) {
       setForm((prev) => ({ ...prev, time: getCurrentTime(), course: "" }));
-      setCourseError(false);
+      // setCourseError(false);
     }
   };
  
@@ -94,7 +94,7 @@ export function RegisterDialog({
               value={form.course}
               onValueChange={(val) => {
                 setForm({ ...form, course: val ?? "" });
-                setCourseError(false);
+                // setCourseError(false);
               }}
             >
               <SelectTrigger className="w-full">
