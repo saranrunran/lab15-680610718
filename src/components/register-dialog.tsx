@@ -22,13 +22,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function RegisterDialog() {
+export function RegisterDialog({ onEnrollSuccess }: { onEnrollSuccess?: (id: string) => void }) {
   const [open, setOpen] = useState(false);
 
   const getCurrentTime = () => {
     return new Date().toTimeString().split(" ")[0];
   };
-  
+
   const [form, setForm] = useState({
     course: "",
     time: getCurrentTime(),
@@ -65,32 +65,43 @@ export function RegisterDialog() {
     }
   };
 
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   if (!form.course) {
+  //     setCourseError(true);
+  //     return;
+  //   }
+
+  //   const updatedCards = prevCards.map((card: any) => {
+  //     if (card.courseId === form.course || card.id === form.course) {
+  //       return {
+  //         ...card,
+  //         isEnrolled: true,
+  //         studentName: form.fullName,
+  //         program: form.program,
+  //         registeredTime: form.time,
+  //       };
+  //     }
+  //     return card;
+  //   });
+
+  //   localStorage.setItem("lab15.cards", JSON.stringify(updatedCards));
+
+  //   setOpen(false);
+
+  //   window.location.reload();
+  // };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.course) return;
 
-    if (!form.course) {
-      setCourseError(true);
-      return;
+    if (onEnrollSuccess) {
+      onEnrollSuccess(form.course);
     }
 
-    const updatedCards = prevCards.map((card: any) => {
-      if (card.courseId === form.course || card.id === form.course) {
-        return {
-          ...card,
-          isEnrolled: true,
-          studentName: form.fullName,
-          program: form.program,
-          registeredTime: form.time,
-        };
-      }
-      return card;
-    });
-
-    localStorage.setItem("lab15.cards", JSON.stringify(updatedCards));
-
-    setOpen(false);
-
-    window.location.reload();
+    setOpen(false); // ปิดกล่อง Dialog
   };
 
   return (
